@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "groupName": {
+      "value": "CloudComputing"
+    },
+    "groupLocation": {
+      "value": "West Europe"
+    },
+    "appServiceName": {
+      "value": "LibraryBot"
+    },
+    "appServicePlanName": {
+      "value": "S1"
+    },
+    "appServicePlanLocation": {
+      "value": "West Europe"
+    },
+    "appServicePlanSku": {
+      "value": {
+        "name": "S1",
+        "tier": "Standard",
+        "size": "S1",
+        "family": "S",
+        "capacity": 1
+      }
+    },
+    "appType": {
+      "value": "MultiTenant"
+    },
+    "appId": {
+      "value": "a920bd17-c119-47a6-9d37-a8e1ac73e470"
+    },
+    "appSecret": {
+      "value": "Library_Bot_2023"
+    },
+    "UMSIName": {
+      "value": ""
+    },
+    "UMSIResourceGroupName": {
+      "value": ""
+    },
+    "tenantId": {
+      "value": ""
+    }
+  }
+}
