@@ -15,13 +15,18 @@ const restify = require('restify');
 const {
     CloudAdapter,
     ConfigurationServiceClientCredentialFactory,
-    createBotFrameworkAuthenticationFromConfiguration
+    createBotFrameworkAuthenticationFromConfiguration,
+    MemoryStorage,
+    ConversationState,
+    UserState
 } = require('botbuilder');
 
 // This bot's main dialog.
-const { EchoBot } = require('./bot');
+const { CodeBot } = require('./bots/CodeBot');
+const { MainDialog } = require('./dialogs/MainDialog');
 
-// Create HTTP server
+
+// Create HTTP 
 const server = restify.createServer();
 server.use(restify.plugins.bodyParser());
 
@@ -67,8 +72,13 @@ const onTurnErrorHandler = async (context, error) => {
 // Set the onTurnError for the singleton CloudAdapter.
 adapter.onTurnError = onTurnErrorHandler;
 
+const memoryState = new MemoryStorage();
+const conversationalState = new ConversationState(memoryState);
+const userState = new UserState(memoryState);
+
 // Create the main dialog.
-const myBot = new EchoBot();
+const dialog = new MainDialog(userState);
+const myBot = new CodeBot(conversationalState, userState, dialog);
 
 // Listen for incoming requests.
 server.post('/api/messages', async (req, res) => {
