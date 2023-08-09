@@ -1,0 +1,62 @@
+{
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "type": "AdaptiveCard",
+    "version": "1.2",
+    "body": [
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": 2,
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Canali Social",
+                            "weight": "Bolder",
+                            "size": "ExtraLarge",
+                            "spacing": "None"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "text": "Seguici sui nostri canali social per non perderti nessuna novità",
+            "type": "TextBlock"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "title": "Instagram",
+                    "type": "Action.OpenUrl",
+                    "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Instagram_logo_2022.svg/1024px-Instagram_logo_2022.svg.png",
+                    "url": "https://www.instagram.com/"
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "title": "Facebook",
+                    "type": "Action.OpenUrl",
+                    "iconUrl": "https://img.freepik.com/premium-vector/blue-social-media-logo_197792-1759.jpg",
+                    "url": "https://www.facebook.com/"
+                }
+            ]
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "title": "Telegram",
+                    "type": "Action.OpenUrl",
+                    "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/2048px-Telegram_logo.svg.png",
+                    "url": "https://web.telegram.org/k/"
+                }
+            ]
+        }
+    ]
+}

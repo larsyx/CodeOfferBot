@@ -2,7 +2,8 @@ const { AttachmentLayoutTypes, CardFactory, MessageFactory, ActivityTypes } = re
 const { TextPrompt, ChoicePrompt, ComponentDialog, DialogSet, DialogTurnStatus, WaterfallDialog } = require('botbuilder-dialogs');
 const { ReportDialog } = require('./ReportDialog');
 const { ProductDialog } = require('./ProductDialog');
-const AdaptiveCard = require('../adaptiveCard.json');
+const SOCIAL_CARD = require('../adaptiveCard/SocialCard.json');
+const INFO_CARD = require('../adaptiveCard/infoCard.json');
 
 const CHOICE_PROMPT = 'ChoicePrompt';
 const WATERFALL_DIALOG = 'WaterfallDialog';
@@ -80,27 +81,30 @@ class MainDialog extends ComponentDialog {
             );
 
             const menuMessage = {attachments: [menu]};
-            await step.context.sendActivity(menuMessage);
-            return await step.prompt(TEXT_PROMPT, {
-                prompt: 'Seleziona un\'opzione dal menu per proseguire!'
-            });
+            return await step.context.sendActivity(menuMessage);
 
         }else if(optionSelected === 'informazioni'){
-            const social = CardFactory.heroCard();
+            return await step.context.sendActivity({
+                attachments: [CardFactory.adaptiveCard(INFO_CARD)]
+            });
         }else if(optionSelected === 'prodotti'){
             return await step.beginDialog(ProductDialog);
         }else if(optionSelected === 'social'){
-            const social = CardFactory.heroCard();
+            return await step.context.sendActivity({
+                attachments: [CardFactory.adaptiveCard(SOCIAL_CARD)]
+            });
+            
         }else if(optionSelected === 'segnalazione'){
             return await step.beginDialog(ReportDialog);
         }else{
             await step.context.sendActivity(MessageFactory.text('Opzione selezionata non supportata riprova\n'))
             console.log("ricevuto: " + optionSelected);
-            return await step.replaceDialog(WATERFALL_DIALOG);
+            return await step.replaceDialog(this.id);
         }
-        return await step.replaceDialog(this.id);
     } 
+
     async loopStep(step){
+        console.log("sono in loop");
         return await step.replaceDialog(this.id);
     }
 }
