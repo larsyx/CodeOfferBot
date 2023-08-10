@@ -1,17 +1,18 @@
 const { AttachmentLayoutTypes, CardFactory, MessageFactory, ActivityTypes } = require('botbuilder');
 const { TextPrompt, ChoicePrompt, ComponentDialog, DialogSet, DialogTurnStatus, WaterfallDialog } = require('botbuilder-dialogs');
-const { ReportDialog } = require('./ReportDialog');
-const { ProductDialog } = require('./ProductDialog');
+const { REPORT_DIALOG, ReportDialog } = require('./ReportDialog');
+const { PRODUCT_DIALOG, ProductDialog } = require('./ProductDialog');
 const SOCIAL_CARD = require('../adaptiveCard/SocialCard.json');
 const INFO_CARD = require('../adaptiveCard/infoCard.json');
 
 const CHOICE_PROMPT = 'ChoicePrompt';
 const WATERFALL_DIALOG = 'WaterfallDialog';
 const TEXT_PROMPT = 'TextPrompt';
+const MAIN_DIALOG = 'MainDialog';
 
 class MainDialog extends ComponentDialog {
     constructor() {
-        super('MainDialog');
+        super(MAIN_DIALOG);
 
         // Define the main dialog and its related components.
         this.addDialog(new TextPrompt(TEXT_PROMPT));
@@ -88,14 +89,14 @@ class MainDialog extends ComponentDialog {
                 attachments: [CardFactory.adaptiveCard(INFO_CARD)]
             });
         }else if(optionSelected === 'prodotti'){
-            return await step.beginDialog(ProductDialog);
+            return await step.beginDialog(PRODUCT_DIALOG);
         }else if(optionSelected === 'social'){
             return await step.context.sendActivity({
                 attachments: [CardFactory.adaptiveCard(SOCIAL_CARD)]
             });
             
         }else if(optionSelected === 'segnalazione'){
-            return await step.beginDialog(ReportDialog);
+            return await step.beginDialog(REPORT_DIALOG);
         }else{
             await step.context.sendActivity(MessageFactory.text('Opzione selezionata non supportata riprova\n'))
             console.log("ricevuto: " + optionSelected);
@@ -110,3 +111,4 @@ class MainDialog extends ComponentDialog {
 }
 
 module.exports.MainDialog = MainDialog;
+module.exports.MAIN_DIALOG = MAIN_DIALOG;
