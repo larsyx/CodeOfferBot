@@ -35,6 +35,7 @@ async function queryCategory(categoria) {
         .fetchAll()
     
     return results;
+
 }
 
 
@@ -56,10 +57,7 @@ async function queryProduct(id) {
         .container(containerId)
         .items.query(querySpec)
         .fetchAll()
-        for (var queryResult of results) {
-            let resultString = JSON.stringify(queryResult)
-            console.log(`\tQuery returned ${resultString}\n`)
-        }
+
     return results;
 }
 
@@ -75,10 +73,6 @@ async function queryGetCategories() {
         .container(containerId)
         .items.query(querySpec)
         .fetchAll()
-        for (var queryResult of results) {
-            let resultString = JSON.stringify(queryResult)
-            console.log(`\tQuery returned ${resultString}\n`)
-        }
     
     return results;
 }
@@ -101,10 +95,6 @@ async function queryFind(nome) {
         .container(containerId)
         .items.query(querySpec)
         .fetchAll()
-        for (var queryResult of results) {
-            let resultString = JSON.stringify(queryResult)
-            console.log(`\tQuery returned ${resultString}\n`)
-        }
     
     return results;
 }
@@ -121,10 +111,6 @@ async function queryMoreConvenient() {
         .container(containerId)
         .items.query(querySpec)
         .fetchAll()
-        for (var queryResult of results) {
-            let resultString = JSON.stringify(queryResult)
-            console.log(`\tQuery returned ${resultString}\n`)
-        }
     
     return results;
 }
@@ -141,10 +127,6 @@ async function queryHints() {
         .container(containerId)
         .items.query(querySpec)
         .fetchAll()
-        for (var queryResult of results) {
-            let resultString = JSON.stringify(queryResult)
-            console.log(`\tQuery returned ${resultString}\n`)
-        }
     
     return results;
 }
@@ -152,6 +134,9 @@ async function queryHints() {
 module.exports = {
     queryCategory : queryCategory,
     queryProduct : queryProduct,
-    queryGetCategories : queryGetCategories
+    queryGetCategories : queryGetCategories,
+    queryFind : queryFind,
+    queryHints : queryHints,
+    queryMoreConvenient : queryMoreConvenient
 };
 

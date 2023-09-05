@@ -4,6 +4,7 @@ const { REPORT_DIALOG, ReportDialog } = require('./ReportDialog');
 const { PRODUCT_DIALOG, ProductDialog } = require('./ProductDialog');
 const SOCIAL_CARD = require('../adaptiveCard/SocialCard.json');
 const INFO_CARD = require('../adaptiveCard/infoCard.json');
+const { SHOW_PRODUCT_DIALOG } = require('./ShowProductDialog');
 
 const CHOICE_PROMPT = 'ChoicePrompt';
 const WATERFALL_DIALOG = 'WaterfallDialog';
@@ -21,6 +22,7 @@ class MainDialog extends ComponentDialog {
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
         this.addDialog(new WaterfallDialog(WATERFALL_DIALOG,[
             this.welcomeStep.bind(this),
+            this.menuStep.bind(this),
             this.optionStep.bind(this),
             this.loopStep.bind(this)
         ]));
@@ -49,9 +51,8 @@ class MainDialog extends ComponentDialog {
         });
     }
 
-    async optionStep(step){
+    async menuStep(step){
         const optionSelected = step.result.toLowerCase();
-        console.log("ricevuto: " + optionSelected);
         if(optionSelected === 'menu'){
             const menu = CardFactory.heroCard(
                 'Menu',
@@ -82,19 +83,27 @@ class MainDialog extends ComponentDialog {
             );
 
             const menuMessage = {attachments: [menu]};
-            return await step.context.sendActivity(menuMessage);
-
-        }else if(optionSelected === 'informazioni'){
-            return await step.context.sendActivity({
+            await step.context.sendActivity(menuMessage);
+            return await step.prompt(TEXT_PROMPT);  
+        }else{
+            return await step.next(optionSelected);
+        }
+    }
+    async optionStep(step){
+        const optionSelected = step.result.toLowerCase();
+        console.log("ricevuto: " + optionSelected);
+        if(optionSelected === 'informazioni'){
+            await step.context.sendActivity({
                 attachments: [CardFactory.adaptiveCard(INFO_CARD)]
             });
+            return await step.next();
         }else if(optionSelected === 'prodotti'){
             return await step.beginDialog(PRODUCT_DIALOG);
         }else if(optionSelected === 'social'){
-            return await step.context.sendActivity({
+            await step.context.sendActivity({
                 attachments: [CardFactory.adaptiveCard(SOCIAL_CARD)]
             });
-            
+            return await step.next();
         }else if(optionSelected === 'segnalazione'){
             return await step.beginDialog(REPORT_DIALOG);
         }else{
