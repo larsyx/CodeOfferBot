@@ -68,8 +68,7 @@ class ProductDialog extends ComponentDialog{
                 return await step.replaceDialog(CATEGORY_PRODUCT);
             case 'Suggerimenti':
                 var prodotti = await QueryDb.queryHints();
-                await step.context.sendActivity('sono in suggerimenti');
-                return await step.replaceDialog(MAIN_DIALOG);
+                return await step.beginDialog(SHOW_PRODUCT_DIALOG, prodotti);
                 break;
             case 'Cerca':
                 return await step.replaceDialog(FIND_PRODUCT);
@@ -85,8 +84,9 @@ class ProductDialog extends ComponentDialog{
 
      async findAndShow(step){
         const result = step.result;
-        await step.context.sendActivity(MessageFactory.text('Stai cercando: ' + result));
-        return await step.next;
+        const prodotti = await QueryDb.queryFind(result);
+
+        return await step.beginDialog(SHOW_PRODUCT_DIALOG, prodotti);
      }
 
      async showCategory(step){

@@ -1,0 +1,114 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": " ",
+            "wrap": true,
+            "weight": "Bolder",
+            "size": "ExtraLarge"
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "Image",
+                    "url": " "
+                }
+            ]
+        },
+        {
+            "type": "Container",
+            "items": [
+                {
+                    "type": "TextBlock",
+                    "text": "Prezzo:",
+                    "wrap": true,
+                    "fontType": "Monospace",
+                    "size": "Large"
+                },
+                {
+                    "type": "ColumnSet",
+                    "columns": [
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": " ",
+                                    "size": "Large",
+                                    "color": "Attention",
+                                    "isSubtle": true,
+                                    "wrap": true,
+                                    "horizontalAlignment": "Center",
+                                    "weight": "Lighter",
+                                    "spacing": "None"
+                                }
+                            ],
+                            "horizontalAlignment": "Center"
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": " ",
+                                    "wrap": true,
+                                    "size": "ExtraLarge",
+                                    "fontType": "Monospace",
+                                    "style": "heading",
+                                    "horizontalAlignment": "Center"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "Column",
+                            "width": "stretch",
+                            "items": [
+                                {
+                                    "type": "TextBlock",
+                                    "text": " ",
+                                    "wrap": true,
+                                    "size": "Large",
+                                    "spacing": "None",
+                                    "weight": "Bolder",
+                                    "color": "Good",
+                                    "horizontalAlignment": "Center"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "Descrizione:",
+            "wrap": true,
+            "fontType": "Monospace",
+            "size": "Large"
+        },
+        {
+            "type": "TextBlock",
+            "text": " ",
+            "wrap": true,
+            "fontType": "Default",
+            "size": "Medium"
+        },
+        {
+            "type": "ActionSet",
+            "actions": [
+                {
+                    "type": "Action.OpenUrl",
+                    "title": "Compra",
+                    "role": "Button",
+                    "url": " "
+                }
+            ]
+        }
+    ]
+}

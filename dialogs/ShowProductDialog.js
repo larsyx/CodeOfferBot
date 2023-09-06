@@ -1,5 +1,8 @@
-const { MessageFactory } = require("botbuilder-core");
+const { MessageFactory, CardFactory, ActivityTypes } = require("botbuilder-core");
 const { ComponentDialog, WaterfallDialog, TextPrompt } = require("botbuilder-dialogs");
+const fs = require('fs');
+const QueryDb = require("../dbManager/QueryDb");
+const PRODUCTS_CARD = '../adaptiveCard/productsCard.json';
 const SHOW_PRODUCT_DIALOG = 'ShowProductDialog';
 const WATERFALL_DIALOG = 'WaterfallDialog';
 const PRODOTTI_STATE = 'ProdottiState';
@@ -21,7 +24,6 @@ class ShowProductDialog extends ComponentDialog{
         const dialogSet = new DialogSet(accessor);
         dialogSet.add(this);
 
-        console.log('sono in run');
         const dialogContext = await dialogSet.createContext(turnContext);
         const results = await dialogContext.continueDialog();
         if (results.status === DialogTurnStatus.empty) {
@@ -32,15 +34,39 @@ class ShowProductDialog extends ComponentDialog{
 
     async showList(step){
         const prodotti = step.options;
+        const cardDefinition = JSON.parse(fs.readFileSync('./adaptiveCard/productsCard.json', 'utf8'));
+        
         for(const prodotto of prodotti){
-            step.context.sendActivity(`Scrivo: ${prodotto.id}, ${prodotto.Nome}`);
+            cardDefinition.body[0].text = prodotto.Nome;
+            cardDefinition.body[1].columns[0].items[0].url = prodotto.Immagine;
+            cardDefinition.body[1].columns[1].items[1].text = prodotto.Prezzo + " €";
+            cardDefinition.body[1].columns[1].items[3].text = prodotto.PrezzoScontato + " €";
+            cardDefinition.body[2].text = "ID: " + prodotto.id;
+            
+            await step.context.sendActivity({ attachments: [CardFactory.adaptiveCard(cardDefinition)] });
         }
 
-        return await step.endDialog();
+        return await step.prompt(TEXT_PROMPT, 'Inserisci l\'ID del prodotto per maggiori informazioni:');
     }
 
     async showProduct(step){
-        console.log('sono in show');
+        const result = step.result;
+        const product = await QueryDb.queryProduct(result);
+        if(product[0] == undefined){
+            await step.context.sendActivity('Id inserito non valido');
+        }else{
+            const cardDefinition = JSON.parse(fs.readFileSync('./adaptiveCard/productCard.json', 'utf8'));
+
+            cardDefinition.body[0].text = product[0].Nome;
+            cardDefinition.body[1].items[0].url = product[0].Immagine;
+            cardDefinition.body[2].items[1].columns[0].items[0].text = "~~" + product[0].Prezzo + " €~~";
+            cardDefinition.body[2].items[1].columns[1].items[0].text = product[0].PrezzoScontato + " €";
+            cardDefinition.body[2].items[1].columns[2].items[0].text = "-"+product[0].Sconto +"%";
+            cardDefinition.body[4].text = product.Descrizione;
+    
+            await step.context.sendActivity({ attachments: [CardFactory.adaptiveCard(cardDefinition)] });
+        }
+        return await step.next();
     }
 }
 

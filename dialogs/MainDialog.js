@@ -2,9 +2,10 @@ const { AttachmentLayoutTypes, CardFactory, MessageFactory, ActivityTypes } = re
 const { TextPrompt, ChoicePrompt, ComponentDialog, DialogSet, DialogTurnStatus, WaterfallDialog } = require('botbuilder-dialogs');
 const { REPORT_DIALOG, ReportDialog } = require('./ReportDialog');
 const { PRODUCT_DIALOG, ProductDialog } = require('./ProductDialog');
+const fs = require('fs');
 const SOCIAL_CARD = require('../adaptiveCard/SocialCard.json');
 const INFO_CARD = require('../adaptiveCard/infoCard.json');
-const { SHOW_PRODUCT_DIALOG } = require('./ShowProductDialog');
+const PRODUCT_CARD = require("../adaptiveCard/productsCard.json");
 
 const CHOICE_PROMPT = 'ChoicePrompt';
 const WATERFALL_DIALOG = 'WaterfallDialog';
@@ -31,7 +32,6 @@ class MainDialog extends ComponentDialog {
         this.initialDialogId = WATERFALL_DIALOG;
     }
 
-
     async run(turnContext, accessor) {
         const dialogSet = new DialogSet(accessor);
         dialogSet.add(this);
@@ -43,11 +43,11 @@ class MainDialog extends ComponentDialog {
         }
     }
 
-    async welcomeStep(step){
+    async welcomeStep(step){;
         var messagetext = 'Benvenuto nel seguente bot come posso aiutarla\nper iniziare scriva menu\n';
-        var message = MessageFactory.text(messagetext);
+
         return await step.prompt(TEXT_PROMPT, {
-            prompt: message
+            prompt: messagetext
         });
     }
 

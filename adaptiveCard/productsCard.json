@@ -1,0 +1,70 @@
+{
+    "type": "AdaptiveCard",
+    "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+    "version": "1.3",
+    "body": [
+        {
+            "type": "TextBlock",
+            "text": " ",
+            "wrap": true,
+            "size": "Large",
+            "weight": "Bolder"
+        },
+        {
+            "type": "ColumnSet",
+            "columns": [
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "Image",
+                            "url": " "
+                        }
+                    ]
+                },
+                {
+                    "type": "Column",
+                    "width": "stretch",
+                    "items": [
+                        {
+                            "type": "TextBlock",
+                            "text": "Prezzo originale:",
+                            "wrap": true,
+                            "spacing": "None",
+                            "size": "Medium"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": " ",
+                            "wrap": true,
+                            "horizontalAlignment": "Center",
+                            "size": "Large"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": "Prezzo scontato:",
+                            "wrap": true,
+                            "size": "Medium"
+                        },
+                        {
+                            "type": "TextBlock",
+                            "text": " ",
+                            "wrap": true,
+                            "size": "Large",
+                            "horizontalAlignment": "Center",
+                            "weight": "Bolder"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "TextBlock",
+            "text": "ID: 45",
+            "wrap": true,
+            "horizontalAlignment": "Right",
+            "size": "Medium"
+        }
+    ]
+}
