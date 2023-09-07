@@ -6,6 +6,7 @@ const fs = require('fs');
 const SOCIAL_CARD = require('../adaptiveCard/SocialCard.json');
 const INFO_CARD = require('../adaptiveCard/infoCard.json');
 const PRODUCT_CARD = require("../adaptiveCard/productsCard.json");
+const QueryDb = require('../dbManager/QueryDb');
 
 const CHOICE_PROMPT = 'ChoicePrompt';
 const WATERFALL_DIALOG = 'WaterfallDialog';
@@ -45,7 +46,7 @@ class MainDialog extends ComponentDialog {
 
     async welcomeStep(step){;
         var messagetext = 'Benvenuto nel seguente bot come posso aiutarla\nper iniziare scriva menu\n';
-
+        
         return await step.prompt(TEXT_PROMPT, {
             prompt: messagetext
         });

@@ -13,24 +13,27 @@ const PRODOTTI_STATE = 'ProdottiState';
 
 
 class ProductDialog extends ComponentDialog{
-    constructor(userState){
+    constructor(){
         super(PRODUCT_DIALOG);
         this.addDialog(new TextPrompt(TEXT_PROMPT));
         this.addDialog(new ShowProductDialog());
         this.addDialog(new ChoicePrompt(CHOICE_PROMPT));
         this.addDialog(new WaterfallDialog(MAIN_DIALOG,[
             this.choiceStep.bind(this),
-            this.selectChoice.bind(this)
+            this.selectChoice.bind(this),
+            this.loopStep.bind(this)
         ]));
 
         this.addDialog(new WaterfallDialog( FIND_PRODUCT, [
             this.findProduct.bind(this),
             this.findAndShow.bind(this),
+            this.loopStep.bind(this)
         ]));
 
         this.addDialog(new WaterfallDialog( CATEGORY_PRODUCT, [
             this.showCategory.bind(this),
             this.showProductByCategory.bind(this),
+            this.loopStep.bind(this)
         ]));
 
         this.addDialog
@@ -51,8 +54,10 @@ class ProductDialog extends ComponentDialog{
     async choiceStep(step){
         return await step.prompt(CHOICE_PROMPT, 
             'Seleziona un opzione:',
-            ['Più convenienti', 'Categorie', 'Suggerimenti', 'Cerca']
+            ['Più convenienti', 'Categorie', 'Suggerimenti', 'Cerca','Esci']
         );
+        
+        
     }
 
     async selectChoice(step){
@@ -63,15 +68,15 @@ class ProductDialog extends ComponentDialog{
                 await step.context.sendActivity(MessageFactory.text('sono in più convenienti'));
                 var prodotti = await QueryDb.queryMoreConvenient();
                 return await step.beginDialog(SHOW_PRODUCT_DIALOG, prodotti);
-                break;
             case 'Categorie':
                 return await step.replaceDialog(CATEGORY_PRODUCT);
             case 'Suggerimenti':
                 var prodotti = await QueryDb.queryHints();
                 return await step.beginDialog(SHOW_PRODUCT_DIALOG, prodotti);
-                break;
             case 'Cerca':
                 return await step.replaceDialog(FIND_PRODUCT);
+            case 'Esci':
+                return await step.endDialog();
             default:
                 await step.context.sendActivity('Operazione non supportata riprova');
                 return await step.replaceDialog(MAIN_DIALOG);
@@ -114,11 +119,17 @@ class ProductDialog extends ComponentDialog{
     }
 
      async showProductByCategory(step){
-        console.log('Sono in funzione show Product by category');
         const result = step.result;
-        await step.context.sendActivity(MessageFactory.text('Hai selezionato la categoria: ' + result));
         const prodotti = await QueryDb.queryCategory(result);
+        if(prodotti == undefined || prodotti.length==0){
+            step.context.sendActivity('Categoria selezionata non ha prodotti disponibili');
+            return await step.replaceDialog(CATEGORY_PRODUCT);
+        }
         return await step.beginDialog(SHOW_PRODUCT_DIALOG, prodotti);
+     }
+
+     async loopStep(step){
+        return step.replaceDialog(MAIN_DIALOG);
      }
 }
 

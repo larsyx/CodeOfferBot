@@ -1,11 +1,11 @@
 const fs = require('fs');
 const CosmosClient = require('@azure/cosmos').CosmosClient;
 
-const endpoint = ' ';
-const key = ' ';
-const databaseId = ' ';
-const containerId = ' ';
-const partitionKey = {kind: 'Hash', paths: [' ']};
+const endpoint = 'https://codeofferbotdb.documents.azure.com:443/';
+const key = 'C5C92OgMrzGHGq50p5Ow9iQxueV1XwwlgSALylZgrRv6dPDHZxWa47LvgwQy5fHc1ENQmecx0EktACDbKjYeeA==';
+const databaseId = 'CodeOfferDb';
+const containerId = 'Prodotti';
+const partitionKey = {kind: 'Hash', paths: ['/prodottiKey']};
 
 const options = {
     endpoint : endpoint,
@@ -18,11 +18,11 @@ const client = new CosmosClient(options);
 async function queryCategory(categoria) {
     
     const querySpec = {
-        query: 'SELECT r.id, r.Nome, r.Immagine, r.Prezzo, r.PrezzoScontato FROM root r WHERE r.Categoria = @Categoria',
+        query: 'SELECT r.id, r.Nome, r.Immagine, r.Prezzo, r.PrezzoScontato FROM root r WHERE LOWER(r.Categoria) = @Categoria',
         parameters: [
         {
             name: '@Categoria',
-            value: categoria
+            value: categoria.toLowerCase()
         }
         ]
     }
