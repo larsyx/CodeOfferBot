@@ -35,22 +35,16 @@ class ShowProductDialog extends ComponentDialog{
 
     async showList(step){
         const prodotti = step.options;
-        const cardDefinition = JSON.parse(fs.readFileSync('./adaptiveCard/productsCard.json', 'utf8'));
         let PAGEN = PAGE;
         
         if(prodotti.length<PAGE)
             PAGEN = prodotti.length;
         
         for(let i=PAGEN-1; i>=0; i--){
-            cardDefinition.body[0].text = prodotti[i].Nome;
-            cardDefinition.body[1].columns[0].items[0].url = prodotti[i].Immagine;
-            cardDefinition.body[1].columns[1].items[1].text = prodotti[i].Prezzo + " €";
-            cardDefinition.body[1].columns[1].items[3].text = prodotti[i].PrezzoScontato + " €";
-            cardDefinition.body[2].text = "ID: " + prodotti[i].id;
-            
+            const cardDefinition = createCardSmallProduct(prodotti[i]);
             await step.context.sendActivity({ attachments: [CardFactory.adaptiveCard(cardDefinition)] });
         }
-        step.context.sendActivity('Inserisci l\'ID del prodotto per maggiori informazioni:')
+        await step.context.sendActivity('Inserisci l\'ID del prodotto per maggiori informazioni:')
         return await step.prompt(TEXT_PROMPT, 'Scrivi continua per visualizzare altri prodotti, esci per uscire:');       
     }
 
@@ -66,23 +60,17 @@ class ShowProductDialog extends ComponentDialog{
                 if(step.options.length<=PAGE){
                     await step.context.sendActivity('Non ci sono più prodotti da visualizzare. Fai una nuova ricerca');
                     return await step.endDialog();
-                }else 
-                    return await step.replaceDialog(WATERFALL_DIALOG, step.options.slice(PAGE));
+                }else{
+                    const arr = step.options.slice(PAGE);
+                    return await step.replaceDialog(WATERFALL_DIALOG, arr );
+                }
              default:
                 if(!isNaN(result)){
                     const product = await QueryDb.queryProduct(result);
                     if(product[0] == undefined){
                         await step.context.sendActivity('ID inserito non valido');
                     }else{
-                        const cardDefinition = JSON.parse(fs.readFileSync('./adaptiveCard/productCard.json', 'utf8'));
-
-                        cardDefinition.body[0].text = product[0].Nome;
-                        cardDefinition.body[1].items[0].url = product[0].Immagine;
-                        cardDefinition.body[2].items[1].columns[0].items[0].text = "~~" + product[0].Prezzo + " €~~";
-                        cardDefinition.body[2].items[1].columns[1].items[0].text = product[0].PrezzoScontato + " €";
-                        cardDefinition.body[2].items[1].columns[2].items[0].text = "-"+product[0].Sconto +"%";
-                        cardDefinition.body[4].text = product[0].Descrizione;
-                        cardDefinition.body[5].actions[0].url = product[0].link;
+                        const cardDefinition = createCardProduct(product[0]);
                         await step.context.sendActivity({ attachments: [CardFactory.adaptiveCard(cardDefinition)] });
                     } 
                 }else
@@ -95,6 +83,32 @@ class ShowProductDialog extends ComponentDialog{
     async loopStep(step){
         return await step.replaceDialog(WATERFALL_DIALOG, step.options); 
     }
+}
+
+function createCardSmallProduct(product){
+    const cardDefinition = JSON.parse(fs.readFileSync('./adaptiveCard/productsCard.json', 'utf8'));
+
+    cardDefinition.body[0].text = product.Nome;
+    cardDefinition.body[1].columns[0].items[0].url = product.Immagine;
+    cardDefinition.body[1].columns[1].items[1].text = product.Prezzo + " €";
+    cardDefinition.body[1].columns[1].items[3].text = product.PrezzoScontato + " €";
+    cardDefinition.body[2].text = "ID: " + product.id;
+
+    return cardDefinition;
+}
+
+function createCardProduct(product){
+    const cardDefinition = JSON.parse(fs.readFileSync('./adaptiveCard/productCard.json', 'utf8'));
+                        
+    cardDefinition.body[0].text = product.Nome;
+    cardDefinition.body[1].items[0].url = product.Immagine;
+    cardDefinition.body[2].items[1].columns[0].items[0].text = "~~" + product.Prezzo + " €~~";
+    cardDefinition.body[2].items[1].columns[1].items[0].text = product.PrezzoScontato + " €";
+    cardDefinition.body[2].items[1].columns[2].items[0].text = "-"+product.Sconto +"%";
+    cardDefinition.body[4].text = product.Descrizione;
+    cardDefinition.body[5].actions[0].url = product.link;
+
+    return cardDefinition;
 }
 
 module.exports.ShowProductDialog = ShowProductDialog;

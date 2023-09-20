@@ -116,7 +116,6 @@ class MainDialog extends ComponentDialog {
     } 
 
     async loopStep(step){
-        console.log("sono in loop");
         return await step.replaceDialog(this.id);
     }
 }

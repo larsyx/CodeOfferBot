@@ -134,7 +134,7 @@ class ProductDialog extends ComponentDialog{
      }
 
      async loopStep(step){
-        return step.replaceDialog(MAIN_DIALOG);
+        return await step.replaceDialog(MAIN_DIALOG);
      }
 }
 
