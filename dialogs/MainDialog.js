@@ -2,6 +2,7 @@ const { AttachmentLayoutTypes, CardFactory, MessageFactory, ActivityTypes } = re
 const { TextPrompt, ChoicePrompt, ComponentDialog, DialogSet, DialogTurnStatus, WaterfallDialog } = require('botbuilder-dialogs');
 const { REPORT_DIALOG, ReportDialog } = require('./ReportDialog');
 const { PRODUCT_DIALOG, ProductDialog } = require('./ProductDialog');
+const CluRequest = require('../clu/CluRequest');
 const fs = require('fs');
 const SOCIAL_CARD = require('../adaptiveCard/SocialCard.json');
 const INFO_CARD = require('../adaptiveCard/infoCard.json');
@@ -46,7 +47,7 @@ class MainDialog extends ComponentDialog {
 
     async welcomeStep(step){;
         var messagetext = 'Benvenuto nel seguente bot come posso aiutarla\nper iniziare scriva menu\n';
-        
+
         return await step.prompt(TEXT_PROMPT, {
             prompt: messagetext
         });
@@ -54,7 +55,8 @@ class MainDialog extends ComponentDialog {
 
     async menuStep(step){
         const optionSelected = step.result.toLowerCase();
-        if(optionSelected === 'menu'){
+        const intent = await CluRequest.analysisText(step.result);
+        if(optionSelected === 'menu' || intent === 'Menu'){
             const menu = CardFactory.heroCard(
                 'Menu',
                 'Seleziona un opzione:',
@@ -92,24 +94,23 @@ class MainDialog extends ComponentDialog {
     }
     async optionStep(step){
         const optionSelected = step.result.toLowerCase();
-        console.log("ricevuto: " + optionSelected);
-        if(optionSelected === 'informazioni'){
+        const intent = await CluRequest.analysisText(step.result);
+        if(optionSelected === 'informazioni' || intent === 'Informazioni'){
             await step.context.sendActivity({
                 attachments: [CardFactory.adaptiveCard(INFO_CARD)]
             });
             return await step.next();
-        }else if(optionSelected === 'prodotti'){
+        }else if(optionSelected === 'prodotti' || intent === 'Prodotti'){
             return await step.beginDialog(PRODUCT_DIALOG);
         }else if(optionSelected === 'social'){
             await step.context.sendActivity({
                 attachments: [CardFactory.adaptiveCard(SOCIAL_CARD)]
             });
             return await step.next();
-        }else if(optionSelected === 'segnalazione'){
+        }else if(optionSelected === 'segnalazione' || intent === 'Segnalazione'){
             return await step.beginDialog(REPORT_DIALOG);
         }else{
-            await step.context.sendActivity(MessageFactory.text('Opzione selezionata non supportata riprova\n'))
-            console.log("ricevuto: " + optionSelected);
+            await step.context.sendActivity(MessageFactory.text('Opzione selezionata non supportata riprova\n'));
             return await step.replaceDialog(this.id);
         }
     } 

@@ -1,10 +1,14 @@
 const fs = require('fs');
 const CosmosClient = require('@azure/cosmos').CosmosClient;
+const dotenv = require('dotenv').config();
 
-const endpoint = 'https://codeofferbotdb.documents.azure.com:443/';
-const key = 'C5C92OgMrzGHGq50p5Ow9iQxueV1XwwlgSALylZgrRv6dPDHZxWa47LvgwQy5fHc1ENQmecx0EktACDbKjYeeA==';
-const databaseId = 'CodeOfferDb';
-const containerId = 'Prodotti';
+if(dotenv.error)
+    throw customAlias.error;
+
+const endpoint = process.env.EndPoint;
+const key = process.env.KeyDb;
+const databaseId = process.env.DatabaseId;
+const containerId = process.env.ContainerId;
 const partitionKey = {kind: 'Hash', paths: ['/prodottiKey']};
 
 const options = {

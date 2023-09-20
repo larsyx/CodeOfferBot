@@ -1,0 +1,63 @@
+const dotenv = require('dotenv').config();
+const axios = require('axios');
+
+if(dotenv.error)
+    throw dotenv.error;
+
+const URL = `https://${process.env.CluAPIHostName}/language/:analyze-conversations?api-version=2022-10-01-preview`;
+const key = process.env.CluAPIKey;
+const projectName = process.env.CluProjectName;
+const deploymentName = process.env.CluDeploymentName;
+
+const headers = {
+    'Content-Type': 'application/json',
+    'Ocp-Apim-Subscription-Key': key,
+};
+
+const data = {  
+    "kind": "Conversation",
+    "analysisInput": {
+        "conversationItem": {
+        "id": "1",
+        "participantId": "1",
+        "text": ""
+        }
+    },
+    "parameters": {
+        "projectName": projectName,
+        "deploymentName": deploymentName,
+        "stringIndexType": "TextElement_V8"
+    }  
+}
+
+async function analysisText(text){
+    data.analysisInput.conversationItem.text = text;
+    try{
+        const response = await axios.post(URL, data, {headers});
+        console.log('risposta:',response.data.result.prediction.topIntent);
+        return response.data.result.prediction.topIntent;
+    }
+    catch(error){
+        console.error(error);
+        return undefined;
+    }
+}
+
+async function productAnalysis(text){
+    data.analysisInput.conversationItem.text = text;
+    try{
+        const response = await axios.post(URL, data, {headers});
+        if(response.data.result.prediction.topIntent === 'Cerca prodotto')
+            return response.data.result.prediction.entities[0].text;
+        else
+            return undefined;
+    }
+    catch(error){
+        console.error(error);
+    }
+}
+
+module.exports = {
+    analysisText : analysisText,
+    productAnalysis : productAnalysis
+}

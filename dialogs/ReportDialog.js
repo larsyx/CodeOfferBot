@@ -1,15 +1,16 @@
 const { MessageFactory } = require("botbuilder-core");
 const { ComponentDialog, TextPrompt, WaterfallDialog, ConfirmPrompt } = require("botbuilder-dialogs");
+const axios = require('axios');
 
 const REPORT_DIALOG = 'ReportDialog';
 const TEXT_PROMPT = 'TextPrompt';
 const WATERFALL_DIALOG = 'WaterfallDialog';
 const CONFIRM_PROMPT = 'ConfirmPrompt';
+var URL = 'https://reportemailcodeoffer.azurewebsites.net/api/reportemailfunction?code=8d7SAAaRZWL-hm3w8kn977ETf0G13D7pMmsuNu2EL-izAzFuRMqvvQ%3D%3D';
 
 const subject = 'Segnalazione CodeOfferBot';
 const to = 'email@email.com';
 const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-var text, sender, user,pass;
 
 class ReportDialog extends ComponentDialog{
     constructor(){
@@ -43,29 +44,38 @@ class ReportDialog extends ComponentDialog{
 
     }
     async writeProblem(step){
-        sender = step.result;
-        if(!emailRegex.test(sender)){
+        if(!emailRegex.test(step.result)){
             step.context.sendActivity(MessageFactory.text("Email inserita non valida\n"));
             return step.replaceDialog(WATERFALL_DIALOG);
         }
-        console.log("sender: " + sender);
+        
+        step.values.sender = step.result;
         return await step.prompt(TEXT_PROMPT, 'Descrivi in modo chiaro e breve il problema riscontrato');
     }
 
     async reviewMail(step){
-        text = step.result;
-        console.log( 'testo scritto:' + text);
-        step.context.sendActivity(MessageFactory.text("Hai scritto la seguente segnalazione\n" + text ));
+        step.values.text = step.result;
+
+        await step.context.sendActivity(`Email: ${step.values.sender}\n`)
+        await step.context.sendActivity(`Hai scritto la seguente segnalazione:\n${step.values.text}`);
         return await step.prompt(CONFIRM_PROMPT, 'Vuoi inviare la segnalazione?');
-        
     }
+    
 
     async choiceSelect(step){
         const choice = step.result;
         if(choice){
-            step.context.sendActivity(MessageFactory.text('Segnalazione inviata con successo'));
+            URL += '&email='+ step.values.sender+ "&text=\"" + step.values.text+"\"";
+            try{
+
+                const response = await axios.get(URL);
+                await step.context.sendActivity(MessageFactory.text('Segnalazione inviata con successo'));
+            }
+            catch(error){
+                await step.context.sendActivity(MessageFactory.text(error.response.data));
+            }
         }else{
-            step.context.sendActivity(MessageFactory.text('Segnalazione non inviata'));
+            await step.context.sendActivity(MessageFactory.text('Segnalazione non inviata'));
         }
         return await step.endDialog();
     }

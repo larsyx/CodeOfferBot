@@ -1,6 +1,7 @@
 const { MessageFactory,  CardFactory } = require("botbuilder-core");
 const { ComponentDialog, ChoicePrompt, WaterfallDialog, TextPrompt } = require("botbuilder-dialogs");
 const QueryDb = require("../dbManager/QueryDb");
+const CluRequest = require("../clu/CluRequest");
 const { SHOW_PRODUCT_DIALOG, ShowProductDialog } = require("./ShowProductDialog");
 
 const CHOICE_PROMPT = 'ChoicePrompt';
@@ -88,10 +89,14 @@ class ProductDialog extends ComponentDialog{
     }
 
      async findAndShow(step){
-        const result = step.result;
-        const prodotti = await QueryDb.queryFind(result);
-
-        return await step.beginDialog(SHOW_PRODUCT_DIALOG, prodotti);
+        const result = await CluRequest.productAnalysis(step.result);
+        if(result){
+            const prodotti = await QueryDb.queryFind(result);
+            if(prodotti.length > 0)
+                return await step.beginDialog(SHOW_PRODUCT_DIALOG, prodotti);
+        }
+        await step.context.sendActivity('Nessun prodotto trovato');
+        return await step.replaceDialog(MAIN_DIALOG);
      }
 
      async showCategory(step){
