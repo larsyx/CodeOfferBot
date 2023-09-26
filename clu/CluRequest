@@ -34,7 +34,6 @@ async function analysisText(text){
     data.analysisInput.conversationItem.text = text;
     try{
         const response = await axios.post(URL, data, {headers});
-        console.log('risposta:',response.data.result.prediction.topIntent);
         return response.data.result.prediction.topIntent;
     }
     catch(error){
@@ -57,7 +56,23 @@ async function productAnalysis(text){
     }
 }
 
+async function productSelectId(text){
+    data.analysisInput.conversationItem.text = text;
+    
+    try{
+        const response = await axios.post(URL, data, {headers});
+        if(response.data.result.prediction.topIntent === 'Seleziona_Id')
+            return response.data.result.prediction.entities[0].text;
+        else
+            return undefined;
+    }
+    catch(error){
+        console.error(error);
+    }
+}
+
 module.exports = {
     analysisText : analysisText,
-    productAnalysis : productAnalysis
+    productAnalysis : productAnalysis,
+    productSelectId : productSelectId
 }

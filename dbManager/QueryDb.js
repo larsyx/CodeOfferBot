@@ -93,9 +93,9 @@ async function queryFind(nome) {
         .database(databaseId)
         .container(containerId)
         .items.query(querySpec)
-        .fetchAll()
+        .fetchAll();
 
-    return results;
+        return results;
 }
 
 async function queryMoreConvenient() {

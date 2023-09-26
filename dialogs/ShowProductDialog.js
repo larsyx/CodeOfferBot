@@ -1,9 +1,11 @@
 const { MessageFactory, CardFactory, ActivityTypes } = require("botbuilder-core");
 const { ComponentDialog, WaterfallDialog, TextPrompt } = require("botbuilder-dialogs");
+const CluRequest = require("../clu/CluRequest");
 const fs = require('fs');
 const QueryDb = require("../dbManager/QueryDb");
 const PRODUCTS_CARD = '../adaptiveCard/productsCard.json';
 const SHOW_PRODUCT_DIALOG = 'ShowProductDialog';
+const SHOW_LIST_WATERFALL = 'showListWaterfall';
 const WATERFALL_DIALOG = 'WaterfallDialog';
 const TEXT_PROMPT = 'TextPrompt';
 const PAGE = 10;
@@ -12,13 +14,17 @@ class ShowProductDialog extends ComponentDialog{
     constructor(){
         super(SHOW_PRODUCT_DIALOG);
 
-        this.addDialog(new WaterfallDialog(WATERFALL_DIALOG,[
+        this.addDialog(new WaterfallDialog(SHOW_LIST_WATERFALL,[
             this.showList.bind(this),
+        ]));
+
+        this.addDialog(new WaterfallDialog(WATERFALL_DIALOG,[
+            this.selectId.bind(this),
             this.showProduct.bind(this),
-            this.loopStep.bind(this)
+            this.endStep.bind(this)
         ]));
         
-        this.initialDialogId = WATERFALL_DIALOG;
+        this.initialDialogId = SHOW_LIST_WATERFALL;
     }
 
     async run(turnContext, accessor) {
@@ -44,8 +50,12 @@ class ShowProductDialog extends ComponentDialog{
             const cardDefinition = createCardSmallProduct(prodotti[i]);
             await step.context.sendActivity({ attachments: [CardFactory.adaptiveCard(cardDefinition)] });
         }
+        return await step.beginDialog(WATERFALL_DIALOG, prodotti);
+    }
+
+    async selectId(step){
         await step.context.sendActivity('Inserisci l\'ID del prodotto per maggiori informazioni:')
-        return await step.prompt(TEXT_PROMPT, 'Scrivi continua per visualizzare altri prodotti, esci per uscire:');       
+        return await step.prompt(TEXT_PROMPT, 'Scrivi continua per visualizzare altri prodotti, esci per uscire:');      
     }
 
     async showProduct(step){
@@ -62,11 +72,12 @@ class ShowProductDialog extends ComponentDialog{
                     return await step.endDialog();
                 }else{
                     const arr = step.options.slice(PAGE);
-                    return await step.replaceDialog(WATERFALL_DIALOG, arr );
+                    return await step.replaceDialog(SHOW_LIST_WATERFALL, arr );
                 }
              default:
-                if(!isNaN(result)){
-                    const product = await QueryDb.queryProduct(result);
+                const id = await CluRequest.productSelectId(result); 
+                if(id != undefined){
+                    const product = await QueryDb.queryProduct(id);
                     if(product[0] == undefined){
                         await step.context.sendActivity('ID inserito non valido');
                     }else{
@@ -76,11 +87,10 @@ class ShowProductDialog extends ComponentDialog{
                 }else
                     await step.context.sendActivity('comando inserito non valido');
         }
-        return await step.prompt(TEXT_PROMPT,'Invia qualsiasi cosa per continuare');
-
+        return await step.next();
     }
 
-    async loopStep(step){
+    async endStep(step){
         return await step.replaceDialog(WATERFALL_DIALOG, step.options); 
     }
 }
