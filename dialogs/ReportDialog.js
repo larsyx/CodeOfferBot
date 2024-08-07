@@ -6,7 +6,7 @@ const REPORT_DIALOG = 'ReportDialog';
 const TEXT_PROMPT = 'TextPrompt';
 const WATERFALL_DIALOG = 'WaterfallDialog';
 const CONFIRM_PROMPT = 'ConfirmPrompt';
-var URL = 'https://reportemailcodeoffer.azurewebsites.net/api/reportemailfunction?code=8d7SAAaRZWL-hm3w8kn977ETf0G13D7pMmsuNu2EL-izAzFuRMqvvQ%3D%3D';
+var URL = 'https://reportemailcodeoffer.azurewebsites.net/api/ReportEmailFunction?code=JrWPnYirSaMHp0-_YS_bu8ST1O1KP2A33jvdVGDia8ZPAzFubxLhxQ%3D%3D';
 
 const subject = 'Segnalazione CodeOfferBot';
 const to = 'email@email.com';

@@ -17,6 +17,8 @@
     },
     "dependencies": {
         "@azure/cosmos": "^3.17.3",
+        "@azure/identity": "^4.4.1",
+        "@azure/keyvault-secrets": "^4.8.0",
         "axios": "^1.5.0",
         "botbuilder": "~4.15.0",
         "botbuilder-dialogs": "^4.20.0",

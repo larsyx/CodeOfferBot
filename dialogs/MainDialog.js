@@ -102,7 +102,7 @@ class MainDialog extends ComponentDialog {
             return await step.next();
         }else if(optionSelected === 'prodotti' || intent === 'Prodotti'){
             return await step.beginDialog(PRODUCT_DIALOG);
-        }else if(optionSelected === 'social'){
+        }else if(optionSelected === 'social' || intent === 'Social'){
             await step.context.sendActivity({
                 attachments: [CardFactory.adaptiveCard(SOCIAL_CARD)]
             });
