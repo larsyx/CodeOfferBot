@@ -1,7 +1,7 @@
 {
-    "name": "LibraryBot",
+    "name": "CodeOfferBot",
     "version": "1.0.0",
-    "description": "Offre servizi su ordini e consigli per libri",
+    "description": "Offre servizi su ordini e consigli per prodotti in offerta",
     "author": "Generated using Microsoft Bot Builder Yeoman generator v4.17.0",
     "license": "MIT",
     "main": "index.js",
@@ -23,6 +23,7 @@
         "botbuilder": "~4.15.0",
         "botbuilder-dialogs": "^4.20.0",
         "dotenv": "~8.2.0",
+        "on-exit-leak-free": "^2.1.2",
         "restify": "^11.1.0"
     },
     "devDependencies": {
