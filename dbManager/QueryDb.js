@@ -10,9 +10,7 @@ const vaultUri = `https://${keyVaultName}.vault.azure.net`;
 if(dotenv.error)
     throw customAlias.error;
 
-const credential = new InteractiveBrowserCredential({
-    tenantId: process.env.TenantId
-});
+const credential = new DefaultAzureCredential();
 
 const clientVault = new SecretClient(vaultUri, credential);
 

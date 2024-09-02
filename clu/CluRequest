@@ -10,9 +10,7 @@ const keyVaultName = process.env.KEY_VAULT_NAME;
 const vaultUri = `https://${keyVaultName}.vault.azure.net`;
 
 
-const credential = new InteractiveBrowserCredential({
-    tenantId: process.env.TenantId
-});
+const credential = new DefaultAzureCredential();
 
 const client = new SecretClient(vaultUri, credential);
 
